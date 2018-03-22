@@ -4,6 +4,8 @@
 % 20180218
 %
 
+clc;
+close all;
 
 %% config
 % camera
@@ -13,11 +15,16 @@ pixsize=20e-6;      % camera pixel pitch [m]
 gfilt_sig=3;        % gaussian width
 
 % data file
-fname='F0_f77.png';
+fname='F0_f79+81_a70.png';
+% fname='f80.png';
 
 
 %% load raw image
 Iraw=imread(fname);
+
+if max(Iraw(:))==2^16-1
+    warning('Image is saturated.');
+end
 
 % beam intensity - scale pixel values to [0,1]
 Ibeam=double(Iraw)/double(max(Iraw(:)));
@@ -29,7 +36,7 @@ y=pixsize*(1:npixels(2));
 [X,Y]=ndgrid(x,y);
 
 % display beam profile
-h=figure('Name','beam profile');
+h_raw=figure('Name','beam profile');
 s=surf(1e3*X,1e3*Y,Ibeam,'EdgeColor','none','FaceColor','interp');
 cbar=colorbar;
 cbar.Title.String='Intensity (a.u.)';
@@ -43,7 +50,7 @@ ylabel('y [mm]');
 Ifilt=imgaussfilt(Ibeam,gfilt_sig);
 
 % display beam profile
-h=figure('Name','beam profile (filtered)');
+h_filt=figure('Name','beam profile (filtered)');
 s=surf(1e3*X,1e3*Y,Ifilt,'EdgeColor','none','FaceColor','interp');
 cbar=colorbar;
 cbar.Title.String='Intensity (a.u.)';
@@ -83,7 +90,7 @@ Zfit=cat(3,Xfit,Yfit);
 Ifit=gauss2rot(p_fit,Zfit);
 
 % display beam profile
-h=figure('Name','fitted beam profile');
+h_fit=figure('Name','fitted beam profile');
 s=surf(1e3*Xfit,1e3*Yfit,Ifit,'EdgeColor','none','FaceColor','interp');
 cbar=colorbar;
 cbar.Title.String='Intensity (a.u.)';
@@ -96,7 +103,23 @@ ylabel('y [mm]');
 %% summarise beam profile
 amp=p_fit(1);
 x0=[p_fit(2),p_fit(4)];
-w=[p_fit(3),p_fit(5)];
+w=[p_fit(3),p_fit(5)]
 theta=p_fit(6);
 c=p_fit(7);
 
+
+% %% display fitted cross-section
+% % indicate major-minor axis
+% mm=tan(theta);      % gradient
+% cc=x0(2)-mm*x0(1);  % y-intercept
+% 
+% xq=linspace(min(X(:)),max(X(:)));
+% yq=x0(2);
+% vq=interpn(X,Y,Ifilt,xq,yq,'linear');
+% 
+% figure;
+% plot(xq,vq);
+
+
+% display
+fprintf('%0.3e\n',x0);
