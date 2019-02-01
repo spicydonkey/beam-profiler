@@ -1,12 +1,17 @@
 function F = gauss2rot(p,x)
 %% Gaussian function parameterisation
-% p = [Amp, x0, wx, y0, wy, theta, c]
+% 2D (bi-variate) Normal/Gaussian function with rotated principal axes with
+% offset
 %
-% Mrot = [cos(phi) -sin(phi); sin(phi) cos(phi)]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Parameter vector: p = [amp, mu_x, sig_x, mu_y, sig_y, theta, offset]
 %
+%
+% DKS
 
 %% Evaluate gaussian function
 % transform to rotated coord system
+%   Mrot = [cos(phi) -sin(phi); sin(phi) cos(phi)]
 X(:,:,1)= (x(:,:,1)-p(2))*cos(p(6)) - (x(:,:,2)-p(4))*sin(p(6));
 X(:,:,2)= (x(:,:,1)-p(2))*sin(p(6)) + (x(:,:,2)-p(4))*cos(p(6));
 
